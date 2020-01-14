@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Data from './api/rc'
+import Data from '../api/rc'
 export default class structure extends Component {
     componentDidMount(){
            

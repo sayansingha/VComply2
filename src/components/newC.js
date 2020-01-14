@@ -1,125 +1,88 @@
 import React, { Component } from 'react'
 import Data from './api/rc'
-export default class structure extends Component {
-    componentDidMount(){
-           
-        
-    }
-    constructor(props) {
+import Check from './newC2'
+export default class newC extends Component {
+    constructor(props){
         super(props);
+
         this.state = {
-          name: "",
-          head: 10
-          
+            name:"" ,
+            emptyFlag: true
         };
-      }
-    
-    render() {
-        let all = [];
-        let arr = []
-        Data.map(function(name){
-        all.push({rc_id: name.rc_id,  rc_name: name.rc_name, rc_head: name.rc_head, visibility: name.visibility, parent_id: name.parent_id});
-        })  
-        if(this.state.name === ""){
-            console.log("abc")
-            for(let i = 0;i < Data.length;i++){
-                //console.log("abc")
-                if(Data[i].visibility === 1 && Data[i].parent_id === 0){
-                    // {return <li key={i}>{Data[i].rc_name}</li>}
-                    arr.push(Data[i].rc_name);
-                }
-                // while(Data[i].child_id.length != 0){
-                if(Data[i].visibility === 1 && Data[i].child_id.length === 0){
-                    var temp;
-                    temp = Data[i];
-                    
-                    arr.push(temp.rc_name);
-                    while(temp.parent_id !== 0){
-                        // {return <li key={index}>{all[temp.parent_id-1].rc_name}->{temp.rc_name}</li>}
-                        temp = all[temp.parent_id-1];
-                        console.log(temp)
-                        arr.push(temp.rc_name);
-                    }
-                }
-                if(Data[i].visibility === 1 && Data[i].child_id.length!== 0 && Data.parent_id !== 0){
-                    var temp;
-                    temp = Data[i];
-                    
-                    arr.push(temp.rc_name);
-                    while(temp.parent_id !== 0){
-                        // {return <li key={index}>{all[temp.parent_id-1].rc_name}->{temp.rc_name}</li>}
-                        temp = all[temp.parent_id-1];
-                        console.log(temp)
-                        arr.push(temp.rc_name);
-                    }
-                }
-            }
-            // console.log(arr[0]);
-            }       
-        
-
-
-        {Data.map((name,index)=>{
-            
-            if(name.visibility===1 && name.rc_name === this.state.name )
-            {
-                // this.setState({temp:name})
-                if(name.parent_id === 0){
-                arr.push(name.rc_name);
-                if(name.child_id.length !== 0){
-                    for(let i = 0;i < name.child_id.length;i++){
-                        var temp;
-                        temp = all[name.child_id[i]-1];
-                        console.log(temp)
-                        arr.push(temp.rc_name);
-                        while(temp.parent_id !== 0 ){
-                            // {return <li key={index}>{all[temp.parent_id-1].rc_name}->{temp.rc_name}</li>}
-                            temp = all[temp.parent_id-1];
-                            console.log(temp)
-                            arr.push(temp.rc_name);
-                        }
-                    }
-                }}
-                else if(name.parent_id !== 0){
-                var temp;
-                temp = name;
-                
-                arr.push(temp.rc_name);
-                while(temp.parent_id !== 0){
-                    // {return <li key={index}>{all[temp.parent_id-1].rc_name}->{temp.rc_name}</li>}
-                    temp = all[temp.parent_id-1];
-                    console.log(temp)
-                    arr.push(temp.rc_name);
-                }
-
-            }
-
-                console.log(arr);
-                
-            }
-            else if(name.visibility === 0 && name.rc_head === this.state.head && name.rc_name === this.state.name){
-                let temp;
-                temp = name;
-                arr.push(temp.rc_name);
-                while(temp.parent_id !== 0){
-                    // {return <li key={index}>{all[temp.parent_id-1].rc_name}->{temp.rc_name}</li>}
-                    temp = all[temp.parent_id-1];
-                    console.log(temp)
-                    arr.push(temp.rc_name);
+        this.names = Data.map(name => name.rc_name)
+        this.arr = [];
+        this.obj = Data;
+        this.obj.sort((a,b)=> a.parent_id - b.parent_id);
+        this.hashmap = {};
+        for(let eli of Data){
+            for(let elj of Data){
+                if(elj.parent_id === eli.rc_id){
+                    eli.edges.push(elj.rc_id);
                 }
             }
         }
         
-    )
+        for(let el of Data){
+            this.hashmap[el.rc_id] = el;
+        }
+
     }
-           
-        //console.log(all)
+    // function 
+    solution (query){
+        this.arr.push(query);
+        console.log(this.arr);
+        let queryId = -1;
+        let el;
+        for(el of Data){
+            
+            if(el.rc_name === query){
+                queryId = el.rc_id;
+                break;
+            }
+        }
+        for(let el of this.hashmap[queryId].edges){
+            
+            this.solution(this.hashmap[el].rc_name);
+        }    
+    }
+
+    componentWillMount () {
+        Data.map((name)=>{
+            if(name.parent_id === 0){
+                console.log("Will Mount->",name.rc_name);
+                this.solution(name.rc_name)
+            }
+        })
+        // this.solution("India")
+    }
+
+    render() {
+        
         return (
             <div>
-                <input type="text"  onChange={(e) =>  { this.setState({name:e.target.value}); }} />     
-                    <ol>
-                      {arr.map(name => <li key={name}>{name}</li>)}
-                    </ol>   
+                <div>
+                    <input type="text" onChange={(e) =>  {
+                        const textValue = e.target.value
+                        this.setState({name: textValue});
+                        // if target.value is part of this.Name then call solution
+                        this.arr.length = 0
+                        if(this.names.indexOf(textValue) > -1){
+                            this.solution(textValue);
+                        }
+                        else {
+                            this.solution("India");
+                        }
+                    }} />  
+                </div>
+                <div>
+                    {this.arr.map((name)=>{
+                        console.log('button marker  --> ', name)
+                        return <Check key={name} name={name}/>
+                    })}
+                    {/* {JSON.stringify(this.arr)} */}
+                    {/* <Check name="M. G. Road"/> */}
+                    
+                </div>
             </div>
         )
     }

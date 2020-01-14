@@ -1,13 +1,13 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Struct from './components/structure'
-import Check from './components/checkcomp'
+import New from './components/newC'
+// import Check from './components/checkcomp'
 function App() {
   return (
     <div className="App">
-      <Check/>
-      {/* <Struct/> */}
+      {/* <Check name="Ranchi"/> */}
+      <New/>
     </div>
   );
 }

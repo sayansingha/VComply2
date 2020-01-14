@@ -1,19 +1,14 @@
 import React, { Component } from 'react'
 import Data from './api/rc'
 export default class structure extends Component {
-    componentDidMount(){
-           
-        
-    }
     constructor(props) {
         super(props);
         this.state = {
-          name: "",
-          head: 10
+          name:this.props.name ,
+          head: 9
           
         };
       }
-    
     render() {
         let all = [];
         let arr = []
@@ -53,13 +48,14 @@ export default class structure extends Component {
         
     )
     }
-           
+    
+    // const {state: { name }} = this;
         //console.log(all)
         return (
             <div>
-                <input type="text" onChange={(e) =>  { this.setState({name:e.target.value});}} />     
+                {/* <input type="text" onChange={(e) =>  { this.setState({name:e.target.value});}} />      */}
                     <ol>
-                      {arr.slice(0).reverse().map(name => <button key={name}>{name}</button>)}
+                      {arr.slice(0).reverse().map(name => <button key={name}>{name}</button>)} 
                     </ol>   
             </div>
         )
